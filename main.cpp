@@ -12,10 +12,13 @@
 
 using namespace std;
 
+
+
+
 // Thread to handle connections
 void ConnectionThread(int sock_fd){
-    try {
-        mutex socket_lock;
+
+    try{
         Log::print("Thread created");
 
         int sock = sock_fd; // sock input from accept()
@@ -25,33 +28,14 @@ void ConnectionThread(int sock_fd){
 
         while (runLoop && (valread = read( sock , buffer, 1024) != 0)) // Loop that listens to a socket
         {
-            Log::success("Loop");
-            try{
-                Log::print("Before try read");
-                ;
-                Log::print("After try read");
-            } catch (exception& e) {
-                Log::warn(strcat("Error ",e.what()));
-            }
-            Log::print("After try ");
-
-            //printf("%s\n",buffer );
             char *message = "Message Recieved\0";
-            Log::print("Before Send ");
-            try{
-                Log::print("Before try send");
-                
-                Log::print("After try send");
-            } catch (exception& e) {
-                Log::warn(strcat("Error ",e.what()));
-            }
-            unique_lock<mutex> lock(socket_lock);
             send(sock , message , strlen(message) , 0 );
-            printf("Message received : %s\n", buffer);
+            printf("Message received : %s\n%s%s\n", H_CYAN,buffer,RESET);
+            
         }
-        Log::warn("Thread Killed");
+        Log::warn("Connection killed unexpectedly");
     } catch(...) {
-        Log::alert("FUCK!");
+        Log::alert("Thread died unexpectedly ");
     }
 }
 
