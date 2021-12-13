@@ -5,10 +5,57 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <thread>
+#include <mutex>
 
 #include "colour.h"
 
 using namespace std;
+
+// Thread to handle connections
+void ConnectionThread(int sock_fd){
+    try {
+        mutex socket_lock;
+        Log::print("Thread created");
+
+        int sock = sock_fd; // sock input from accept()
+        char buffer[1024] = {0}; // buffer for input
+        bool runLoop = true; // runs loop while true
+
+        while (runLoop) // Loop that listens to a socket
+        {
+            Log::success("Loop");
+            try{
+                Log::print("Before try read");
+                int valread = read( sock , buffer, 1024);
+                Log::print("After try read");
+            } catch (exception& e) {
+                Log::warn(strcat("Error ",e.what()));
+            }
+            Log::print("After try ");
+
+            //printf("%s\n",buffer );
+            char *message = "Message Recieved";
+            Log::print("Before Send ");
+            try{
+                Log::print("Before try send");
+                
+                Log::print("After try send");
+            } catch (exception& e) {
+                Log::warn(strcat("Error ",e.what()));
+            }
+            unique_lock<mutex> lock(socket_lock);
+            send(sock , message , strlen(message) , 0 );
+            //send(sock , message , strlen(message) , 0 );
+            Log::note("Message from client");
+        }
+        Log::warn("Thread Killed");
+    } catch(...) {
+        Log::alert("FUCK!");
+    }
+}
+
+
 
 int main()
 {
@@ -28,7 +75,7 @@ int main()
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
-    char buffer[1024] = {0};
+
 
     if ( (server_fd = socket(AF_INET, SOCK_STREAM,0 )) == 0)
     {
@@ -54,21 +101,45 @@ int main()
         Log::error("Error while binding");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 3) < 0)
-    {
-        Log::alert("Critical Error");
-        Log::error("Error attempting to listen");
-        exit(EXIT_FAILURE);
-    }
-    if ((sock = accept(server_fd, (struct sockaddr *)&address,(socklen_t*)&addrlen))<0)
-    {
-        Log::alert("Critical Error");
-        Log::error("Error attempting to listen");
-        exit(EXIT_FAILURE);
-    }
-    int valread = read( sock , buffer, 1024);
-    printf("%s\n",buffer );
-    send(sock , "Ez" , strlen("Ez") , 0 );
 
+    
+    if (listen(server_fd, 50) < 0)
+    {
+        Log::alert("Critical Error");
+        Log::error("Error attempting to listen");
+        exit(EXIT_FAILURE);
+    }
+
+    while (true)
+    {
+        int sock = 0;
+        Log::print("Listening");
+        if ((sock = accept(server_fd, (struct sockaddr *) &address, (socklen_t*) &addrlen))<0)
+        {
+            Log::alert("Critical Error");
+            Log::error("Error attempting to listen");
+            exit(EXIT_FAILURE);
+        }
+        else{
+            Log::note("Accepted connection!");
+            thread connThrObj(ConnectionThread, sock);
+            connThrObj.detach();
+            Log::warn("After Thread");
+        }
+    }
+
+
+
+    
+
+    Log::warn("End main loop");
+    while (true) {
+        // bing
+    }   
+    Log::warn("End of main");
 }
+
+
+
+
 
