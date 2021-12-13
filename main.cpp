@@ -21,13 +21,14 @@ void ConnectionThread(int sock_fd){
         int sock = sock_fd; // sock input from accept()
         char buffer[1024] = {0}; // buffer for input
         bool runLoop = true; // runs loop while true
+        int valread;
 
-        while (runLoop) // Loop that listens to a socket
+        while (runLoop && (valread = read( sock , buffer, 1024) != 0)) // Loop that listens to a socket
         {
             Log::success("Loop");
             try{
                 Log::print("Before try read");
-                int valread = read( sock , buffer, 1024);
+                ;
                 Log::print("After try read");
             } catch (exception& e) {
                 Log::warn(strcat("Error ",e.what()));
@@ -35,7 +36,7 @@ void ConnectionThread(int sock_fd){
             Log::print("After try ");
 
             //printf("%s\n",buffer );
-            char *message = "Message Recieved";
+            char *message = "Message Recieved\0";
             Log::print("Before Send ");
             try{
                 Log::print("Before try send");
@@ -46,8 +47,7 @@ void ConnectionThread(int sock_fd){
             }
             unique_lock<mutex> lock(socket_lock);
             send(sock , message , strlen(message) , 0 );
-            //send(sock , message , strlen(message) , 0 );
-            Log::note("Message from client");
+            printf("Message received : %s\n", buffer);
         }
         Log::warn("Thread Killed");
     } catch(...) {
