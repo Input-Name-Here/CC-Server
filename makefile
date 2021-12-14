@@ -1,4 +1,4 @@
-OBJS = main.cpp colour.cpp
+OBJS = main.cpp logger.cpp server.cpp
 
 CC = g++
 

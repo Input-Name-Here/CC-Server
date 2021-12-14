@@ -47,14 +47,4 @@
 #define H_CYAN "\e[96m"
 #define H_WHITE "\e[97m"
 
-
-// Define print functions
-namespace Log{
-void alert(std::string msg); // Prints red blinking text
-void error(std::string msg); // Prints red text
-void warn(std::string msg); // Prints yellow text
-void print(std::string msg); // Prints white text
-void note(std::string msg); // Prints blue text
-void success(std::string msg); // Prints green text
-}
 #endif // COLOUR_H
