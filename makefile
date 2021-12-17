@@ -5,7 +5,7 @@ CC = g++
 COMPILER_FLAGS = -w
 
 LINKER_FLAGS = # in case you want to add some libraries, add the -l flags here
-COMPILER_FLAGS = -lpthread # add -g to debug with gdb
+COMPILER_FLAGS = -std=c++17 -lpthread # add -g to debug with gdb
 
 OBJ_NAME = program
 

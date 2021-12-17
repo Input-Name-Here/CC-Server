@@ -5,29 +5,26 @@
 #define PROTOCOL_H
 
 
-struct header
-{
-	std::string version; // Example "CC1"
-	std::string request; // Example "Get"
-	std::vector<std::vector<std::string>> data; 
-};
-
-struct body
-{
-	std::string data; 
+struct argument{
+	unsigned char  arg_type;
+	short int      len;
+	unsigned char* data;
 };
 
 class message
 {
 public:
-	std::string mEncode(); // Encode 
-	message mDecode(std::string etxt);
-	header messageHeader;
-	body messageBody;
+	unsigned char* encode();
+	void decode(unsigned char msg[]);
+
+	unsigned char type;
+	short int flags;
+
+	struct argument* arguments[];
 private:
-	char seperator = ':';
-	char endofline = ';';
-    
+	const unsigned char protocol[2] = {0x43,0x32}; 
+	const unsigned char  version    = 1;
+
 };
 
 
