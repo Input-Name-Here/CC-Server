@@ -4,23 +4,25 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+int arglen(struct argument);
 
 struct argument{
-	unsigned char  arg_type;
+	std::string argtype;
 	short int      len;
-	unsigned char* data;
+	std::string data;
 };
 
 class message
 {
 public:
-	unsigned char* encode();
-	void decode(unsigned char msg[]);
-
+	std::string encode();
+	void decode(std::string etxt);
+    void debug();
+    
 	unsigned char type;
 	short int flags;
 
-	struct argument* arguments[];
+	std::vector<struct argument> arguments;
 private:
 	const unsigned char protocol[2] = {0x43,0x32}; 
 	const unsigned char  version    = 1;

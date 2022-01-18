@@ -22,18 +22,28 @@ void signal_handler(int sig)
 int main(int argv, char** argc)
 {
     unsigned char data[] = "Hello world!";
-    struct argument arg;
-    arg.arg_type = 0x00; // Null / Ignore
-    arg.len=std::size(data);
+    struct argument arg1;
+    arg1.argtype = "A"; 
+    arg1.data = "hello";
+    struct argument arg2;
+    arg2.argtype = "B"; 
+    arg2.data = "Wow!";
+    struct argument arg3;
+    arg3.argtype = "C"; 
+    arg3.data = "test";
 
-    struct argument args[1] = {arg};
+    //std::vector<struct argument> args = {arg};
 
     message msg;
-    msg.arguments = args;
-    msg.type = 0x00; 
-    msg.flags = 0b0000000000000000;
+    msg.arguments = {arg1,arg2,arg3};
+    msg.type = 0x05; 
+    msg.flags = 0x0101;
+    msg.debug();
 
-
+    message msg2;
+    msg2.decode(msg.encode());
+    msg2.debug();
+    
     signal(SIGINT, signal_handler); 
 
     if(argv <= 1){

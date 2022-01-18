@@ -74,9 +74,11 @@ void Server::ClientHandler(int sfd)
 
     while (threads_active && (valread = read( sfd , buffer, 1024) != 0)) // Loop that listens to a socket
     {
-        char *message = "Message Recieved\0";
-        send(sfd , message , strlen(message) , 0 );
+        char *reply = "Message Recieved\0";
+        send(sfd , reply , strlen(reply) , 0 );
         printf("Message received : %s\n%s%s\n", H_CYAN,buffer,RESET);
-            
+        if (buffer[0]=='C'&buffer[1]=='S'&buffer[2]=='V'){
+            printf("CSV Receieved");
+        }
     }
 }
