@@ -33,8 +33,8 @@ public:
 
 	std::vector<struct argument> arguments;
 private:
-	const unsigned char protocol[2] = {0x43,0x32}; 
-	const unsigned char  version    = 1;
+	unsigned char protocol[2] = {0x43,0x32}; 
+	unsigned char  version    = 1;
 
 };
 

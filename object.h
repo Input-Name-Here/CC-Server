@@ -10,12 +10,12 @@ struct vec{
     double x;
     double y;
     double z;
-    vec(a,b,c){
-        x=a
-        y=b
-        z=c
+    vec(double a,double b,double c){
+        x=a;
+        y=b;
+        z=c;
     }
-}
+};
 
 
 

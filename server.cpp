@@ -59,6 +59,7 @@ void Server::Listen(int port)
             exit(EXIT_FAILURE);
         }
         else{
+            Logger::Log(LOG_INFO, "Client has connected");
             std::thread handler(ClientHandler, sock);
             handler.detach();
         }
@@ -77,7 +78,7 @@ void Server::ClientHandler(int sfd)
         
         message recvmsg;
         std::string str(buffer,1024);
-        recvmsg.decode(std::string(buffer,valread));
+        recvmsg.decode(std::string(buffer,1024));
         recvmsg.debug();
         
         char *reply = "Message Recieved\0";
@@ -88,4 +89,5 @@ void Server::ClientHandler(int sfd)
         }
         buffer[1024] = {0};
     }
+    Logger::Log(LOG_INFO, "Loop died");
 }

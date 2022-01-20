@@ -36,11 +36,11 @@ int main(int argv, char** argc)
     msg.arguments = {arg1,arg2,arg3};
     msg.type = 0x00; 
     msg.flags = 0x0000;
-    msg.debug();
+    //msg.debug();
 
-    message msg2;
-    msg2.decode(msg.encode());
-    msg2.debug();
+    //message msg2;
+    //msg2.decode(msg.encode());
+    //msg2.debug();
     
     signal(SIGINT, signal_handler); 
 

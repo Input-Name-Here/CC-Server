@@ -17,10 +17,14 @@ void message::decode(std::string etxt)
     
     if(txt.at(0)=='C' & txt.at(1)=='2')
     {
-        std::cout << etxt.find_first_of(";") << std::endl;
-        std::string atxt=etxt.substr(0,etxt.find_first_of(";"));
-        etxt=atxt;
-        std::cout << etxt.substr(0,etxt.find_first_of(";"))<< std::endl;
+        //std::cout << etxt.find_first_of(";") << std::endl;
+        std::string txt=etxt.substr(0,etxt.find_first_of(";") + 1);
+        //std::string etxt=atxt;
+        //std::cout << etxt<< std::endl;
+        //std::cout << etxt.substr(0,etxt.find_first_of(";"))<< std::endl;
+        this->protocol[0] = txt.at(0);
+        this->protocol[1] = txt.at(1);
+        this->version = txt.at(2);
         this->type = txt.at(3);
         this->flags = (((short)txt.at(4)) << 8) | txt.at(5);
         std::string searchtxt = txt.substr(6,(txt.size()-6));
@@ -133,6 +137,9 @@ void message::debug()
     std::string protocolName;
     if(protocol[0]=='C'& this->protocol[1]=='2'){
         protocolName="C2 Standard Transmission Protocol";
+    }
+    else{
+        protocolName="Unknown";
     }
     const char* prtl =this->getRequest().c_str();
     printf("Message Debug\n");
