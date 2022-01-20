@@ -1,4 +1,4 @@
-OBJS = main.cpp protocol.cpp logger.cpp server.cpp
+OBJS = main.cpp protocol.cpp logger.cpp server.cpp object.cpp
 
 CC = g++
 

@@ -28,16 +28,14 @@ int main(int argv, char** argc)
     struct argument arg2;
     arg2.argtype = "B"; 
     arg2.data = "Wow!";
-    struct argument arg3;
-    arg3.argtype = "C"; 
-    arg3.data = "test";
+    struct argument arg3("SEX","Test");
 
     //std::vector<struct argument> args = {arg};
 
     message msg;
     msg.arguments = {arg1,arg2,arg3};
-    msg.type = 0x05; 
-    msg.flags = 0x0101;
+    msg.type = 0x00; 
+    msg.flags = 0x0000;
     msg.debug();
 
     message msg2;

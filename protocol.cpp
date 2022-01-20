@@ -11,12 +11,16 @@
 #include <algorithm>
 
 
-
 void message::decode(std::string etxt)
 {   
     std::string txt = etxt;
+    
     if(txt.at(0)=='C' & txt.at(1)=='2')
     {
+        std::cout << etxt.find_first_of(";") << std::endl;
+        std::string atxt=etxt.substr(0,etxt.find_first_of(";"));
+        etxt=atxt;
+        std::cout << etxt.substr(0,etxt.find_first_of(";"))<< std::endl;
         this->type = txt.at(3);
         this->flags = (((short)txt.at(4)) << 8) | txt.at(5);
         std::string searchtxt = txt.substr(6,(txt.size()-6));
@@ -60,6 +64,37 @@ int arglen(struct argument arg){
     return sizeof(arg.data) + sizeof(arg.argtype) + 2;
 }
 
+std::string message::getRequest(){
+    std::string request;
+    int ptype = this->type;
+    switch (ptype){
+        case 0:
+            request="PING";
+            break;
+        case 1:
+            request="GET_OBJ";
+            break;
+        case 2:
+            request="SET_OBJ";
+            break;
+        case 3:
+            request="GET_LIST";
+            break;
+        case 4:
+            request="GIVE_DATA";
+            break;
+        case 5:
+            request="ID_CHECK";
+            break;
+        case 6:
+            request="NEW_OBJ";
+            break;
+        default:
+            request="ERR";
+    }
+    return request;
+}
+
 
 std::string message::encode()
 {
@@ -75,13 +110,13 @@ std::string message::encode()
 	msgStr[3] = type;
 	msgStr[4] = (flags >> 8) & 0xFF;
 	msgStr[5] = flags & 0xFF;
-    std::string messageString = msgStr;
+    std::string messageString(msgStr,6);
     
 	for(int i=0; arguments.size()>i; i++)
 	{
         messageString += arguments[i].argtype+":"+arguments[i].data+",";
 	}
-    
+	
     messageString.pop_back();
     messageString+=";";
 	return messageString;
@@ -95,11 +130,17 @@ void message::debug()
     char flag1 = (this->flags >> 8) & 0xFF;
     char flag2 = this->flags & 0xFF;
     
+    std::string protocolName;
+    if(protocol[0]=='C'& this->protocol[1]=='2'){
+        protocolName="C2 Standard Transmission Protocol";
+    }
+    const char* prtl =this->getRequest().c_str();
     printf("Message Debug\n");
     printf("- %sMSG Length%s: %s%lu\n%s",H_BLUE,RESET,H_GREEN , msg.size(), RESET);
-    printf("- %sProtocol%s: %s%c%c\n%s",H_BLUE,RESET,H_GREEN, this->protocol[0], this->protocol[1], RESET);
+    printf("- %sProtocol%s: %s%s [%c%c]\n%s",H_BLUE,RESET,H_GREEN,
+           protocolName.c_str(),this->protocol[0], this->protocol[1], RESET);
     printf("- %sVersion%s: %s%u\n%s",H_BLUE,RESET,H_GREEN, this->version, RESET);
-    printf("- %sType%s: %s0x%02x\n%s",H_BLUE,RESET,H_GREEN, this->type, RESET);
+    printf("- %sType%s: %s%s [0x%02x]\n%s",H_BLUE,RESET,H_GREEN,prtl, this->type, RESET);
     printf("- %sFlags%s: %s0x%02x%02x\n%s",H_BLUE,RESET,H_GREEN, flag1, flag2 , RESET);
     printf("- %sArguments%s:\n",H_BLUE,RESET);
 

@@ -6,7 +6,7 @@
 #include "logger.h"
 #include "colour.h"
 #include "server.h"
-
+#include "protocol.h"
 bool Server::threads_active = true;
 
 Server::~Server()
@@ -74,11 +74,18 @@ void Server::ClientHandler(int sfd)
 
     while (threads_active && (valread = read( sfd , buffer, 1024) != 0)) // Loop that listens to a socket
     {
+        
+        message recvmsg;
+        std::string str(buffer,1024);
+        recvmsg.decode(std::string(buffer,valread));
+        recvmsg.debug();
+        
         char *reply = "Message Recieved\0";
         send(sfd , reply , strlen(reply) , 0 );
         printf("Message received : %s\n%s%s\n", H_CYAN,buffer,RESET);
         if (buffer[0]=='C'&buffer[1]=='S'&buffer[2]=='V'){
             printf("CSV Receieved");
         }
+        buffer[1024] = {0};
     }
 }
