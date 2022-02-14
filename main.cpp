@@ -23,10 +23,10 @@ int main(int argv, char** argc)
 {
     unsigned char data[] = "Hello world!";
     struct argument arg1;
-    arg1.argtype = "A"; 
+    arg1.argtype = "Arg"; 
     arg1.data = "hello";
     struct argument arg2;
-    arg2.argtype = "B"; 
+    arg2.argtype = "Bruh"; 
     arg2.data = "Wow!";
     struct argument arg3;
     arg3.argtype = "C"; 
@@ -35,16 +35,14 @@ int main(int argv, char** argc)
     //std::vector<struct argument> args = {arg};
 
     message msg;
-    msg.arguments = {arg1,arg2,arg3};
-    msg.type = 0x05; 
-    msg.flags = 0x0101;
+    msg.arguments = {arg1,arg2,arg3}; 
+    msg.flags = 0x1A2B;
     msg.debug();
-
     message msg2;
     msg2.decode(msg.encode());
     msg2.debug();
-    
-    signal(SIGINT, signal_handler); 
+    //*/
+    //signal(SIGINT, signal_handler); 
 
     if(argv <= 1){
         printf("Usage : %s [port]\n", argc[0]);

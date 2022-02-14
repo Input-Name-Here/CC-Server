@@ -15,17 +15,22 @@ struct argument{
 class message
 {
 public:
-	std::string encode();
-	void decode(std::string etxt);
+	std::vector<unsigned char>  encode();
+	void decode(std::vector<unsigned char>  etxt);
     void debug();
     
-	unsigned char type;
-	short int flags;
+	short int flags=0x0000;
 
 	std::vector<struct argument> arguments;
-private:
-	const unsigned char protocol[2] = {0x43,0x32}; 
+	const unsigned char protocol[4] = {0x43,0x32,0x44,0x00}; 
 	const unsigned char  version    = 1;
+    unsigned int target = 0x111111; // Reciever / 3 Byte
+    unsigned int origin = 0x222222; // Sender / 3 Byte
+    unsigned int msgID  = 0x33333333; // Message block ID / 4 byte
+
+private:
+	unsigned short int startIndex;
+	unsigned short int endIndex;
 
 };
 
