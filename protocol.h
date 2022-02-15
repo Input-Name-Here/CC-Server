@@ -7,7 +7,7 @@
 int arglen(struct argument);
 
 struct argument{
-	std::string argtype;
+	std::string type;
 	short int      len;
 	std::string data;
 };

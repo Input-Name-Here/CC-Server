@@ -6,6 +6,7 @@
 #include "logger.h"
 #include "colour.h"
 #include "server.h"
+#include "protocol.h"
 
 bool Server::threads_active = true;
 
@@ -18,7 +19,7 @@ void Server::Listen(int port)
 {
     int opt = 1;
     int addrlen = sizeof(m_address);
-
+    Logger::Log(LOG_INFO, "Start");
 
     if ( (m_server_fd = socket(AF_INET, SOCK_STREAM,0 )) == 0)
     {
@@ -48,7 +49,7 @@ void Server::Listen(int port)
         Logger::Log(LOG_FATAL, "Error while attempting to listen");
         exit(EXIT_FAILURE);
     }
-
+    Logger::Log(LOG_INFO, "Success");
     while (true)
     {
         int sock = 0;
@@ -59,26 +60,36 @@ void Server::Listen(int port)
             exit(EXIT_FAILURE);
         }
         else{
+            Logger::Log(LOG_INFO, "Handler Creation\n");
             std::thread handler(ClientHandler, sock);
             handler.detach();
         }
     }
-
+    
     
 }
 
 void Server::ClientHandler(int sfd)
 {
     char buffer[1024] = {0}; // buffer for input
+    std::vector<unsigned char> vbuffer;
     int valread;
-
+    printf("Handler Created\n");
     while (threads_active && (valread = read( sfd , buffer, 1024) != 0)) // Loop that listens to a socket
     {
+        
+        for(int i=0; i<1024; i++)
+        {
+            vbuffer[i]=(unsigned char)buffer[i];
+            printf("i");
+        }
+        printf("\n");
         char *reply = "Message Recieved\0";
         send(sfd , reply , strlen(reply) , 0 );
         printf("Message received : %s\n%s%s\n", H_CYAN,buffer,RESET);
-        if (buffer[0]=='C'&buffer[1]=='S'&buffer[2]=='V'){
-            printf("CSV Receieved");
-        }
+        message msg;
+        msg.decode(vbuffer);
+        msg.debug();
     }
+    printf("Handler Death\n");
 }

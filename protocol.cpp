@@ -19,21 +19,29 @@ void message::decode(std::vector<unsigned char> Data)
         std::string msgStr = std::string(Data.begin(), Data.end());
         this->startIndex=(Data[4]<<8)+Data[5];
         this->endIndex=(Data[6]<<8)+Data[7];
+
+        //std::cout << "e: "<< endIndex << std::endl;
         this->flags=(Data[10]<<8)+Data[11];
         this->target= (Data[12]<<16)+(Data[13]<<8)+Data[14];
         this->origin= (Data[15]<<16)+(Data[16]<<8)+Data[17];
         this->msgID= (Data[18]<<24)+(Data[19]<<16)+(Data[20]<<8)+Data[21];
 
-        if(Data[endIndex]!=0x00)
+        if(Data[startIndex]!=0x00)
         {
             int DataIndex = startIndex;
-            while (DataIndex < endIndex)
+            //std::cout << "bruh sex: "<< DataIndex << std::endl;
+            while (DataIndex < endIndex-1)
             {
+                //std::cout << "i: "<< DataIndex << std::endl;
+                struct argument arg;
                 int arglen = Data[DataIndex];
-                std::string arg = std::string(msgStr,DataIndex+1,arglen );
-                int datalen = (Data[DataIndex]<<8)+Data[DataIndex];
-                std::string data = std::string(msgStr,DataIndex+arglen+3,arglen );
-
+                arg.type = std::string(msgStr,DataIndex+1,arglen );
+                int datalen = (Data[DataIndex+arglen+1]<<8)+Data[DataIndex+arglen+2];
+                arg.data = std::string(msgStr,DataIndex+arglen+3,datalen );
+                
+                this->arguments.push_back(arg);
+                DataIndex = DataIndex + arglen + datalen + 3;
+                //std::cout << "i+: "<< DataIndex << std::endl;
             }
         }
     }
@@ -95,8 +103,8 @@ std::vector<unsigned char>  message::encode()
 	{
         //std::cout<<arguments.size()<<std::endl;
         std::string TmpDataStr= 
-            (char)arguments[i].argtype.size()+
-            arguments[i].argtype+
+            (char)arguments[i].type.size()+
+            arguments[i].type+
             (char)((arguments[i].data.size() >> 8) & 0xFF)+
             (char) (arguments[i].data.size() & 0xFF)+
             arguments[i].data;
@@ -106,6 +114,7 @@ std::vector<unsigned char>  message::encode()
 	}
     MSG_Arr.push_back(0x00);
     endIndex = MSG_Arr.size();
+    //std::cout << "Size: "<< endIndex << std::endl;
     MSG_Arr[6] = (endIndex >> 8) & 0xFF;
     MSG_Arr[7] = (endIndex) & 0xFF;
     //*/
@@ -130,7 +139,7 @@ void message::debug()
 {
     std::vector<unsigned char> msgv = encode();
     std::string msg = std::string(msgv.begin(), msgv.end());
-    std::cout << msg << std::endl;
+    //std::cout << msg << std::endl;
     printhex(msg);
     char flag1 = (this->flags >> 8) & 0xFF;
     char flag2 = this->flags & 0xFF;
@@ -145,7 +154,7 @@ void message::debug()
     for(int i=0; this->arguments.size()>i; i++)
 	{
 		printf("  - %s%s%s:%s%s%s\n",H_MAGENTA,
-               this->arguments[i].argtype.c_str(),
+               this->arguments[i].type.c_str(),
                RESET,H_YELLOW,
                this->arguments[i].data.c_str(),
                RESET

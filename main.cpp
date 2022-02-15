@@ -21,15 +21,16 @@ void signal_handler(int sig)
 
 int main(int argv, char** argc)
 {
+    /*
     unsigned char data[] = "Hello world!";
     struct argument arg1;
-    arg1.argtype = "Arg"; 
+    arg1.type = "Arg"; 
     arg1.data = "hello";
     struct argument arg2;
-    arg2.argtype = "Bruh"; 
+    arg2.type = "Bruh"; 
     arg2.data = "Wow!";
     struct argument arg3;
-    arg3.argtype = "C"; 
+    arg3.type = "C"; 
     arg3.data = "test";
 
     //std::vector<struct argument> args = {arg};
@@ -43,7 +44,8 @@ int main(int argv, char** argc)
     msg2.debug();
     //*/
     //signal(SIGINT, signal_handler); 
-
+    //*/
+    printf("Start Main\n");
     if(argv <= 1){
         printf("Usage : %s [port]\n", argc[0]);
         return EXIT_FAILURE;
